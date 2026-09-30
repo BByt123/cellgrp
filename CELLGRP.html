@@ -6,7 +6,7 @@
     <title>西式燒味飯系列 - 線上點餐</title>
     <style>
         :root {
-            --primary-color: #00A650; /* AlipayHK 官方綠色 */
+            --primary-color: #00A650; /* AlipayHK 官方綠 */
             --bg-color: #F6F7FB;
             --card-bg: #FFFFFF;
             --text-main: #1D2129;
@@ -29,7 +29,7 @@
             padding-bottom: 90px;
         }
 
-        /* 頂部標題 */
+        /* 頂部 Header */
         header {
             background: var(--card-bg);
             padding: 16px 20px;
@@ -97,7 +97,7 @@
             font-size: 13px;
         }
 
-        /* 加減按鈕 */
+        /* 數量加減按鈕 */
         .control-btn {
             display: flex;
             align-items: center;
@@ -135,12 +135,10 @@
             text-align: center;
         }
 
-        /* 底部購物車欄 */
+        /* 底部購物車 */
         .cart-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: #FFFFFF;
             box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
             padding: 12px 20px;
@@ -189,7 +187,7 @@
             cursor: not-allowed;
         }
 
-        /* 彈窗 Prompt */
+        /* 彈窗 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -252,6 +250,8 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            text-decoration: none;
+            display: block;
         }
 
         .btn-cancel {
@@ -263,7 +263,6 @@
             cursor: pointer;
         }
 
-        /* 微信/LINE 提示遮罩 */
         .browser-notice {
             background-color: #FFF7E8;
             color: #FF7D00;
@@ -277,7 +276,7 @@
 <body>
 
     <div class="browser-notice" id="browserNotice">
-        ⚠️️ 如在微信或 LINE 內無法開啓 App，請點擊右上角選擇「在 Safari / 瀏覽器開啟」
+        ⚠ 如在 App 內無法開啟，請點擊右上角選擇「在 Safari / 瀏覽器開啟」
     </div>
 
     <header>
@@ -304,14 +303,14 @@
         <div class="modal-card">
             <div class="modal-title">開啟 AlipayHK 轉賬</div>
             <div class="modal-desc">
-                點擊確認後將**自動複製轉賬電話與金額**，並開啟 AlipayHK App。
+                已自動複製金額，點擊下方按鈕直接開啟 **AlipayHK (香港版)**。
             </div>
             <div class="highlight-box">
                 <div>📞 收款號碼：<strong>51695639</strong></div>
                 <div>💰 轉賬金額：<strong id="modalAmount" style="color:var(--accent-red);">HK$ 0</strong></div>
             </div>
             <div class="modal-actions">
-                <button class="btn-confirm" onclick="redirectToAlipayHK()">開啟 AlipayHK</button>
+                <button class="btn-confirm" onclick="redirectToAlipayHK()">開啟 AlipayHK (香港版)</button>
                 <button class="btn-cancel" onclick="closePayModal()">返回修改餐點</button>
             </div>
         </div>
@@ -392,20 +391,24 @@
         function redirectToAlipayHK() {
             const total = calculateTotal();
 
-            // 複製電話與金額至剪貼簿
+            // 複製金額到剪貼簿
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(`${total}`).catch(() => {});
             }
 
-            // 香港 AlipayHK 喚起協議
-            const hkScheme = "alipayshk://";
-            const hkUniversalLink = "https://hk.alipay.com/";
+            // 使用香港版專用 Deep Link/Universal Link
+            // 避開內地版 alipays:// 搶占
+            const hkUniversalLink = "https://hk.alipay.com/p/app/transfer/index?phone=" + targetPhone;
+            const hkScheme = "alipayshk://platformapi/startapp?appId=20000067";
 
+            // 優先嘗試香港版專用 scheme，失敗則使用香港版 universal link
+            let isAppOpened = false;
+            
             window.location.href = hkScheme;
 
             setTimeout(() => {
                 window.location.href = hkUniversalLink;
-            }, 500);
+            }, 300);
 
             closePayModal();
         }
