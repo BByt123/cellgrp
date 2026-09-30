@@ -6,7 +6,7 @@
     <title>西式燒味飯系列 - 線上點餐</title>
     <style>
         :root {
-            --primary-color: #00A650; /* AlipayHK Brand Color */
+            --primary-color: #00A650; /* AlipayHK 官方綠色 */
             --bg-color: #F6F7FB;
             --card-bg: #FFFFFF;
             --text-main: #1D2129;
@@ -19,7 +19,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -29,7 +29,7 @@
             padding-bottom: 90px;
         }
 
-        /* Header */
+        /* 頂部標題 */
         header {
             background: var(--card-bg);
             padding: 16px 20px;
@@ -57,7 +57,7 @@
             font-weight: 600;
         }
 
-        /* Menu Container */
+        /* 菜單列表 */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -73,22 +73,17 @@
         .food-card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 14px;
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            transition: transform 0.1s ease;
-        }
-
-        .food-card:active {
-            transform: scale(0.99);
         }
 
         .food-info h3 {
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .food-price {
@@ -98,12 +93,11 @@
         }
 
         .food-price::before {
-            content: "$";
+            content: "HK$ ";
             font-size: 13px;
-            margin-right: 1px;
         }
 
-        /* Quantity Controls */
+        /* 加減按鈕 */
         .control-btn {
             display: flex;
             align-items: center;
@@ -141,7 +135,7 @@
             text-align: center;
         }
 
-        /* Cart Footer */
+        /* 底部購物車欄 */
         .cart-bar {
             position: fixed;
             bottom: 0;
@@ -173,8 +167,8 @@
         }
 
         .total-price::before {
-            content: "$";
-            font-size: 16px;
+            content: "HK$ ";
+            font-size: 15px;
         }
 
         .pay-btn {
@@ -186,11 +180,7 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             box-shadow: 0 4px 12px rgba(0, 166, 80, 0.3);
-            transition: background 0.2s;
         }
 
         .pay-btn:disabled {
@@ -199,13 +189,10 @@
             cursor: not-allowed;
         }
 
-        /* Modal Popup */
+        /* 彈窗 Prompt */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6);
             display: none;
             justify-content: center;
@@ -221,12 +208,6 @@
             border-radius: 16px;
             padding: 24px;
             text-align: center;
-            animation: popIn 0.25s ease-out;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
         }
 
         .modal-title {
@@ -238,7 +219,7 @@
         .modal-desc {
             font-size: 14px;
             color: var(--text-sub);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             line-height: 1.5;
         }
 
@@ -253,7 +234,7 @@
         }
 
         .highlight-box div {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .modal-actions {
@@ -282,7 +263,7 @@
             cursor: pointer;
         }
 
-        /* Browser Warning */
+        /* 微信/LINE 提示遮罩 */
         .browser-notice {
             background-color: #FFF7E8;
             color: #FF7D00;
@@ -296,7 +277,7 @@
 <body>
 
     <div class="browser-notice" id="browserNotice">
-        ⚠️ 如在微信或 LINE 內無法跳轉，請點擊右上角選擇「在瀏覽器開啟」
+        ⚠️️ 如在微信或 LINE 內無法開啓 App，請點擊右上角選擇「在 Safari / 瀏覽器開啟」
     </div>
 
     <header>
@@ -305,42 +286,38 @@
     </header>
 
     <div class="container">
-        <div class="menu-grid" id="menuList">
-            <!-- 菜單列表動態生成 -->
-        </div>
+        <div class="menu-grid" id="menuList"></div>
     </div>
 
-    <!-- 底部結算欄 -->
     <div class="cart-bar">
         <div class="cart-info">
-            <span class="cart-label">總金額</span>
+            <span class="cart-label">應付金額</span>
             <span class="total-price" id="totalPrice">0</span>
         </div>
         <button class="pay-btn" id="payBtn" disabled onclick="openPayModal()">
-            開啟 AlipayHK 付款
+            前往 AlipayHK 付款
         </button>
     </div>
 
-    <!-- 付款提示彈窗 -->
+    <!-- 提示彈窗 -->
     <div class="modal-overlay" id="payModal">
         <div class="modal-card">
-            <div class="modal-title">準備前往 AlipayHK</div>
+            <div class="modal-title">開啟 AlipayHK 轉賬</div>
             <div class="modal-desc">
-                點擊確認後將**自動複製金額與電話**，並開啟 AlipayHK 應用程式完成轉賬。
+                點擊確認後將**自動複製轉賬電話與金額**，並開啟 AlipayHK App。
             </div>
             <div class="highlight-box">
-                <div>📞 收款電話：<strong>51695639</strong></div>
-                <div>💰 轉賬金額：<strong id="modalAmount" style="color:var(--accent-red);">$0</strong></div>
+                <div>📞 收款號碼：<strong>51695639</strong></div>
+                <div>💰 轉賬金額：<strong id="modalAmount" style="color:var(--accent-red);">HK$ 0</strong></div>
             </div>
             <div class="modal-actions">
-                <button class="btn-confirm" onclick="redirectToAlipayHK()">確認並打開 AlipayHK</button>
-                <button class="btn-cancel" onclick="closePayModal()">取消</button>
+                <button class="btn-confirm" onclick="redirectToAlipayHK()">開啟 AlipayHK</button>
+                <button class="btn-cancel" onclick="closePayModal()">返回修改餐點</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 菜單數據
         const menuData = [
             { id: 1, name: "招牌燒豬手飯", price: 42 },
             { id: 2, name: "惹味燒春雞飯", price: 42 },
@@ -361,7 +338,6 @@
         const targetPhone = "51695639";
         const cart = {};
 
-        // 初始化菜單
         function renderMenu() {
             const menuContainer = document.getElementById('menuList');
             menuContainer.innerHTML = menuData.map(item => `
@@ -379,74 +355,61 @@
             `).join('');
         }
 
-        // 更新購物車數量
         function updateCart(id, change) {
             const currentQty = cart[id] || 0;
             const newQty = Math.max(0, currentQty + change);
-            
             if (newQty === 0) {
                 delete cart[id];
             } else {
                 cart[id] = newQty;
             }
-
             document.getElementById(`count-${id}`).innerText = newQty;
             calculateTotal();
         }
 
-        // 計算總金額
         function calculateTotal() {
             let total = 0;
             for (const id in cart) {
                 const item = menuData.find(m => m.id == id);
-                if (item) {
-                    total += item.price * cart[id];
-                }
+                if (item) total += item.price * cart[id];
             }
-
             document.getElementById('totalPrice').innerText = total;
             document.getElementById('payBtn').disabled = total === 0;
             return total;
         }
 
-        // 開啟彈窗
         function openPayModal() {
             const total = calculateTotal();
             if (total === 0) return;
-            document.getElementById('modalAmount').innerText = `$${total}`;
+            document.getElementById('modalAmount').innerText = `HK$ ${total}`;
             document.getElementById('payModal').style.display = 'flex';
         }
 
-        // 關閉彈窗
         function closePayModal() {
             document.getElementById('payModal').style.display = 'none';
         }
 
-        // 直接跳轉 AlipayHK 並自動複製
         function redirectToAlipayHK() {
             const total = calculateTotal();
-            const copyText = `電話: ${targetPhone} | 金額: HK$${total}`;
 
-            // 自動複製剪貼簿資訊
+            // 複製電話與金額至剪貼簿
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(`${total}`).catch(() => {});
             }
 
-            // Universal Link 及 Direct Scheme 喚起 AlipayHK
-            const alipayScheme = "alipayshk://";
-            const alipayUniversalLink = "https://hk.alipay.com/";
+            // 香港 AlipayHK 喚起協議
+            const hkScheme = "alipayshk://";
+            const hkUniversalLink = "https://hk.alipay.com/";
 
-            // 嘗試開啟 AlipayHK
-            window.location.href = alipayScheme;
+            window.location.href = hkScheme;
 
             setTimeout(() => {
-                window.location.href = alipayUniversalLink;
+                window.location.href = hkUniversalLink;
             }, 500);
 
             closePayModal();
         }
 
-        // 檢查內建瀏覽器環境 (WeChat/LINE)
         function checkEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
             if (ua.includes('micromessenger') || ua.includes('line')) {
@@ -454,7 +417,6 @@
             }
         }
 
-        // 頁面加載初始化
         window.onload = function() {
             renderMenu();
             checkEnvironment();
